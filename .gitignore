@@ -1,0 +1,6 @@
+AAProject/Debug/
+AAProject/Release/
+AAProject/DLL/
+*.sdf
+*.opensdf
+*.suo
