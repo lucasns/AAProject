@@ -2,7 +2,6 @@
 #include <BWAPI.h>
 
 
-
 class MainModule : public BWAPI::AIModule {
 
 public:
@@ -25,11 +24,14 @@ public:
   virtual void onSaveGame(std::string gameName);
   virtual void onUnitComplete(BWAPI::Unit unit);
 
-  void scout(BWAPI::Unit unit);
-  void worker(BWAPI::Unit unit);
-  void attacker(BWAPI::Unit unit);
-  void defender(BWAPI::Unit unit);
-  void manager();
-  void commander();
+
+  
  
 };
+
+void WorkerAgent(BWAPI::Unit unit);
+void SoldierAgent(BWAPI::Unit unit);
+void CentralAgent();
+
+void ArmyManagement();
+void BaseManagement();
