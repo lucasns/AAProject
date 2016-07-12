@@ -13,10 +13,12 @@
   <ItemGroup>
     <ClCompile Include="Source\Dll.cpp" />
     <ClCompile Include="Source\MainModule.cpp" />
+    <ClCompile Include="Source\SoldierAgent.cpp" />
     <ClCompile Include="Source\WorkerAgent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\MainModule.h" />
+    <ClInclude Include="Source\SoldierAgent.h" />
     <ClInclude Include="Source\WorkerAgent.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

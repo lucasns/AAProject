@@ -2,6 +2,7 @@
 #include <BWAPI.h>
 #include <vector>
 #include "WorkerAgent.h"
+#include "SoldierAgent.h"
 
 
 class MainModule : public BWAPI::AIModule {

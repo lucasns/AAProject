@@ -10,6 +10,9 @@
     <ClCompile Include="Source\WorkerAgent.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SoldierAgent.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
@@ -21,6 +24,9 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="Source\WorkerAgent.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoldierAgent.h">
       <Filter>Source</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,16 +6,15 @@ using namespace Filter;
 using namespace std;
 
 
-
 //Central Agent attr -------------------------------------------------------------
 
 //Units
 
 Unitset scouts;
 Unitset buildings;
-Unitset army;
 
 vector<WorkerAgent> workers;
+vector<SoldierAgent> army;
 
 
 
@@ -70,9 +69,6 @@ void MainModule::onStart() {
 		break;
 	}
 
-	WorkerAgent;
-
-
 
 }
 
@@ -96,8 +92,7 @@ void MainModule::onFrame() {
 	
 	//
 
-	if (Broodwar->getFrameCount() % 5 == 0) {
-
+	if (Broodwar->getFrameCount() % 10 == 0) {
 		//Agents
 		CentralAgentAI();
 
@@ -105,10 +100,11 @@ void MainModule::onFrame() {
 			u.Update();
 		}
 
+		
 		for (auto u : army) {
-			SoldierAgentAI(u);
+			u.Update();
 		}
-
+		
 	
 	}
 
@@ -168,6 +164,9 @@ void MainModule::onUnitMorph(BWAPI::Unit unit) {
 			}
 			pos++;
 		}
+	} else if (IsAlly(unit) && unit->getBuildType() == UnitTypes::Zerg_Overlord) {
+		
+
 	}
 	
 }
@@ -185,36 +184,14 @@ void MainModule::onUnitComplete(BWAPI::Unit unit) {
 	} else if (IsBuilding(unit) && IsOwned(unit)) {
 		buildings.insert(unit);
 	} else if (unit->getType() == UnitTypes::Zerg_Zergling) {
-		army.insert(unit);
+		army.push_back(SoldierAgent(unit));
+		
 	}
 }
 
 
 
 //Agent Actions
-
-
-
-void SoldierAgentAI(BWAPI::Unit unit) {
-	
-	if (attackCommand) {
-		if (unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000)) {
-			unit->attack(unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000));
-
-		} else if (unit->getClosestUnit(IsEnemy && CanAttack, 1000)) {
-			unit->attack(unit->getClosestUnit(IsEnemy && CanAttack, 1000));
-
-		} else if (unit->getClosestUnit(IsEnemy, 1000)) {
-			unit->attack(unit->getClosestUnit(IsEnemy, 1000));
-
-		} else {
-			unit->attack(attackPosition);
-		}
-
-	} else {
-		unit->attack(unit->getClosestUnit(IsEnemy, 2000));
-	}
-}
 
 
 void CentralAgentAI() {
@@ -225,6 +202,10 @@ void CentralAgentAI() {
 void ArmyManagement() {
 	attackPosition = enemyBase;
 	if (army.size() >= 6) {
+		for (auto &u : army) {
+			u.AttackOrder(attackPosition);
+			
+		}
 		attackCommand = true;
 	} else {
 		attackCommand = false;
@@ -309,6 +290,7 @@ void BaseManagement() {
 			
 			if (u->isIdle() && pool) {
 				u->train(UnitTypes::Zerg_Zergling);
+				
 			}
 
 
@@ -325,7 +307,7 @@ void BaseManagement() {
 
 			bool sp = false;
 
-			if (u->isIdle() && workers.size() + n <= numWorkers && u->getClosestUnit(IsOwned && GetType == UnitTypes::Zerg_Spawning_Pool)) {
+			if (u->isIdle() && workers.size() + n < numWorkers && u->getClosestUnit(IsOwned && GetType == UnitTypes::Zerg_Spawning_Pool)) {
 				u->train(u->getType().getRace().getWorker());
 			}
 		
@@ -333,8 +315,4 @@ void BaseManagement() {
 		}
 	}
 
-}
-
-int main() {
-	
 }

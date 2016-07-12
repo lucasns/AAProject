@@ -10,24 +10,22 @@ WorkerAgent::WorkerAgent(Unit unit) {
 
 void WorkerAgent::Update() {
 	if (unit == NULL || !unit->exists()) {
-		Broodwar << "**" << std::endl;
 		return;
 	}
 
 
 	if (unit->getClosestUnit(IsEnemy, 100)) {
 		unit->attack(unit->getClosestUnit(IsEnemy, 100));
+
 	}
 
 	if (unit->isIdle()) {
 		if (unit->isCarryingGas() || unit->isCarryingMinerals()) {
 			unit->returnCargo();
 
-		} else if (!unit->getPowerUp()) {
-			if (!unit->gather(unit->getClosestUnit(IsMineralField || IsRefinery))) {
-				Broodwar << Broodwar->getLastError() << std::endl;
-			}
-
+		} else {
+			unit->gather(unit->getClosestUnit(IsMineralField || IsRefinery));
+		
 		}
 	}
 }
