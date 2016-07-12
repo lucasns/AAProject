@@ -3,6 +3,7 @@
 #include <vector>
 #include "WorkerAgent.h"
 #include "SoldierAgent.h"
+#include "CentralAgent.h"
 
 
 class MainModule : public BWAPI::AIModule {
@@ -28,7 +29,7 @@ public:
   virtual void onUnitComplete(BWAPI::Unit unit);
 
 
-  
+  CentralAgent centralAgent;
  
 };
 

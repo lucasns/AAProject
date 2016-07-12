@@ -14,6 +14,10 @@ SoldierAgent::SoldierAgent(Unit unit) {
 }
 
 void SoldierAgent::Update() {
+	if (unit == NULL || !unit->exists()) {
+		return;
+	}
+
 	if (attackCommand) {
 		if (unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000)) {
 			unit->attack(unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000));
