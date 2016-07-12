@@ -1,5 +1,7 @@
 #pragma once
 #include <BWAPI.h>
+#include <vector>
+#include "WorkerAgent.h"
 
 
 class MainModule : public BWAPI::AIModule {
@@ -29,9 +31,9 @@ public:
  
 };
 
-void WorkerAgent(BWAPI::Unit unit);
-void SoldierAgent(BWAPI::Unit unit);
-void CentralAgent();
+void WorkerAgentAI(BWAPI::Unit unit);
+void SoldierAgentAI(BWAPI::Unit unit);
+void CentralAgentAI();
 
 void ArmyManagement();
 void BaseManagement();

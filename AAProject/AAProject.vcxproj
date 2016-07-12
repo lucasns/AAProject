@@ -13,9 +13,11 @@
   <ItemGroup>
     <ClCompile Include="Source\Dll.cpp" />
     <ClCompile Include="Source\MainModule.cpp" />
+    <ClCompile Include="Source\WorkerAgent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\MainModule.h" />
+    <ClInclude Include="Source\WorkerAgent.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{57543A7D-42F0-4803-BD5B-4AEC0E495B1E}</ProjectGuid>

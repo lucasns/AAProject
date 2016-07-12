@@ -6,14 +6,17 @@ using namespace Filter;
 using namespace std;
 
 
+
 //Central Agent attr -------------------------------------------------------------
 
 //Units
 
 Unitset scouts;
-Unitset workers;
 Unitset buildings;
 Unitset army;
+
+vector<WorkerAgent> workers;
+
 
 
 //Map Information
@@ -60,6 +63,16 @@ void MainModule::onStart() {
 
 	buildOrder.insert(buildOrder.begin(), UnitTypes::Zerg_Spawning_Pool);
 
+	Unit a;
+
+	for (auto u : Broodwar->getAllUnits()) {
+		a = u;
+		break;
+	}
+
+	WorkerAgent;
+
+
 
 }
 
@@ -75,7 +88,7 @@ void MainModule::onFrame() {
 
 	Broodwar->drawTextScreen(20, 20, "N workers: %d", workers.size());
 	Broodwar->drawTextScreen(20, 40, "N army: %d", army.size());
-	Broodwar->drawTextScreen(20, 60, "N scouts: %d", scouts.size());
+	Broodwar->drawTextScreen(20, 60, "N buildings: %d", buildings.size());
 	
 	Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
 	Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
@@ -83,15 +96,20 @@ void MainModule::onFrame() {
 	
 	//
 
-	CentralAgent();
+	if (Broodwar->getFrameCount() % 5 == 0) {
 
-	for (auto &u : Broodwar->self()->getUnits()) {
-		if (u->getType().isWorker()) {
-			WorkerAgent(u);
+		//Agents
+		CentralAgentAI();
 
-		} else if (u->getType() == UnitTypes::Zerg_Zergling) {
-			SoldierAgent(u);
+		for (auto u : workers) {
+			u.Update();
 		}
+
+		for (auto u : army) {
+			SoldierAgentAI(u);
+		}
+
+	
 	}
 
 
@@ -125,9 +143,33 @@ void MainModule::onUnitCreate(BWAPI::Unit unit) {
 }
 
 void MainModule::onUnitDestroy(BWAPI::Unit unit) {
+	if (IsAlly(unit) && unit->getType().isWorker()) {
+		int pos = 0;
+		for (auto w : workers) {
+			if (w.unit == unit) {
+				workers.erase(workers.begin() + pos);
+				break;
+			}
+			pos++;
+		}
+
+
+	}
 }
 
 void MainModule::onUnitMorph(BWAPI::Unit unit) {
+	//Remove a Drone morphing into a building from workers
+	if (IsAlly(unit) && IsBuilding(unit)) {
+		int pos = 0;
+		for (auto u : workers) {
+			if (u.unit == unit) {
+				workers.erase(workers.begin() + pos);
+				break;
+			}
+			pos++;
+		}
+	}
+	
 }
 
 void MainModule::onUnitRenegade(BWAPI::Unit unit) {
@@ -138,8 +180,9 @@ void MainModule::onSaveGame(std::string gameName) {
 
 void MainModule::onUnitComplete(BWAPI::Unit unit) {
 	if (IsAlly(unit) && unit->getType().isWorker()) {
-		workers.insert(unit);
-	} else if (IsBuilding(unit)) {
+		workers.push_back(WorkerAgent(unit));
+
+	} else if (IsBuilding(unit) && IsOwned(unit)) {
 		buildings.insert(unit);
 	} else if (unit->getType() == UnitTypes::Zerg_Zergling) {
 		army.insert(unit);
@@ -150,30 +193,14 @@ void MainModule::onUnitComplete(BWAPI::Unit unit) {
 
 //Agent Actions
 
-void WorkerAgent(BWAPI::Unit unit) {
-	if (unit->getClosestUnit(IsEnemy, 100)) {
-		unit->attack(unit->getClosestUnit(IsEnemy, 100));
-	}
-
-	if (unit->isIdle()) {
-		if (unit->isCarryingGas() || unit->isCarryingMinerals()) {
-			unit->returnCargo();
-
-		} else if (!unit->getPowerUp()) {
-			if (!unit->gather(unit->getClosestUnit(IsMineralField || IsRefinery))) {
-				Broodwar << Broodwar->getLastError() << std::endl;
-			}
-
-		}
-	}
-}
 
 
-void SoldierAgent(BWAPI::Unit unit) {
+void SoldierAgentAI(BWAPI::Unit unit) {
 	
 	if (attackCommand) {
 		if (unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000)) {
 			unit->attack(unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000));
+
 		} else if (unit->getClosestUnit(IsEnemy && CanAttack, 1000)) {
 			unit->attack(unit->getClosestUnit(IsEnemy && CanAttack, 1000));
 
@@ -190,7 +217,7 @@ void SoldierAgent(BWAPI::Unit unit) {
 }
 
 
-void CentralAgent() {
+void CentralAgentAI() {
 	ArmyManagement();
 	BaseManagement();
 }
@@ -306,4 +333,8 @@ void BaseManagement() {
 		}
 	}
 
+}
+
+int main() {
+	
 }
