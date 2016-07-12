@@ -17,6 +17,42 @@ CentralAgent::CentralAgent() {
 	
 }
 
+
+Unit & CentralAgent::getBuilder() {
+	//TODO: Get from workers vector
+	Unit builder = Broodwar->getClosestUnit(basePos, GetType == UnitTypes::Zerg_Drone &&
+		(IsIdle || IsGatheringMinerals) &&
+		IsOwned);
+
+	return builder;
+}
+
+void CentralAgent::checkSupply() {
+	if (Broodwar->self()->supplyUsed() + 1 > Broodwar->self()->supplyTotal()) {
+		UnitType supply = UnitTypes::Zerg_Overlord;
+		bool isBuildingSupply = false;
+
+		for (auto u : Broodwar->self()->getUnits()) {
+			if (u->isMorphing()) {
+				if (u->getBuildType() == supply) {
+					isBuildingSupply = true;
+
+				}
+			}
+		}
+
+		
+		if (!isBuildingSupply) {
+			Unit supplyBuilder = getBuilder();
+
+			if (supplyBuilder) {
+				supplyBuilder->train(supply);
+			}
+
+		}
+	}
+}
+
 void CentralAgent::Update() {
 	if (basePos == Position(-1, -1)) {
 		for (auto l : Broodwar->getStartLocations()) {
@@ -37,7 +73,7 @@ void CentralAgent::Update() {
 
 void CentralAgent::ArmyManagement() {
 	attackPosition = enemyBase;
-	if (army.size() >= 6) {
+	if (army.size() >= 20) {
 		for (auto &u : army) {
 			u.AttackOrder(attackPosition);
 
@@ -48,53 +84,9 @@ void CentralAgent::ArmyManagement() {
 
 void CentralAgent::BaseManagement() {
 	//Rewrite this!!!!
-
-	bool isBuildingSupply = false;
-
-	if (Broodwar->self()->supplyUsed() + 1 > Broodwar->self()->supplyTotal()) {
-		UnitType supply = UnitTypes::Zerg_Overlord;
-
-
-		int currSupply = 0;
-
-		for (auto u : Broodwar->self()->getUnits()) {
-			if (u->isMorphing()) {
-				if (u->getBuildType() == supply) {
-					isBuildingSupply = true;
-					currSupply++;
-					break;
-				}
-			}
-		}
-
-		for (auto u : Broodwar->self()->getUnits()) {
-			if (u->getType() == supply) {
-				currSupply++;
-			}
-
-		}
-
-		currSupply *= 16;
-		currSupply += 2;
-
-
-		if (Broodwar->self()->supplyUsed() + 1 > currSupply) {
-
-			Unit supplyBuilder = Broodwar->getClosestUnit(basePos, GetType == supply.whatBuilds().first &&
-				(IsIdle || IsGatheringMinerals) &&
-				IsOwned);
-
-
-			if (supplyBuilder) {
-				supplyBuilder->train(supply);
-			}
-
-		}
-
-	}
+		
+	checkSupply();
 	
-
-
 	UnitType nextBuilding = buildOrder.at(0);
 	Unit builder;
 

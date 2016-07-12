@@ -6,6 +6,11 @@
 
 class CentralAgent {
 
+private:
+	void checkSupply();
+	BWAPI::Unit & getBuilder();
+
+
 public:
 
 
@@ -39,5 +44,9 @@ public:
 	void Update();
 	void ArmyManagement();
 	void BaseManagement();
+
+	
+
+	
 };
 
