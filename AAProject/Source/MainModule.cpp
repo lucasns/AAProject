@@ -178,13 +178,13 @@ void MainModule::onUnitComplete(BWAPI::Unit unit) {
 		ghMutex,
 		100);
 
-	if (IsAlly(unit) && unit->getType().isWorker()) {
+	if (IsAlly(unit) && unit->getType().isWorker() && IsOwned(unit)) {
 		CreateThread(NULL, 0, threadWorkerAgent, (LPVOID)unit, 0, NULL);
 	
 	} else if (IsBuilding(unit) && IsOwned(unit)) {
 		centralAgent.buildings.insert(unit);
 
-	} else if (unit->getType() == UnitTypes::Zerg_Zergling) {
+	} else if (unit->getType() == UnitTypes::Zerg_Zergling && IsOwned(unit)) {
 		CreateThread(NULL, 0, threadSoldierAgent, (LPVOID)unit, 0, NULL);
 		
 	}
