@@ -11,7 +11,6 @@ CentralAgent::CentralAgent() {
 	this->pool = false;
 	this->numWorkers = 4;
 
-	this->buildOrder.insert(buildOrder.begin(), UnitTypes::Zerg_Spawning_Pool);
 
 
 	
@@ -19,7 +18,6 @@ CentralAgent::CentralAgent() {
 
 
 Unit & CentralAgent::getBuilder() {
-	//TODO: Get from workers vector
 	Unit builder = Broodwar->getClosestUnit(basePos, GetType == UnitTypes::Zerg_Drone &&
 		(IsIdle || IsGatheringMinerals) &&
 		IsOwned);
@@ -74,8 +72,16 @@ void CentralAgent::Update() {
 void CentralAgent::ArmyManagement() {
 	attackPosition = enemyBase;
 	if (army.size() >= 1) {
-		for (auto &u : army) {
-			u.AttackOrder(attackPosition);
+		for (auto u : army) {
+			u->AttackOrder(attackPosition);
+
+
+		}
+	}
+
+	if (army.size() >= 6) {
+		for (auto &u : workers) {
+			u->AttackOrder(attackPosition);
 
 		}
 	}
@@ -84,11 +90,10 @@ void CentralAgent::ArmyManagement() {
 }
 
 void CentralAgent::BaseManagement() {
-	//Rewrite this!!!!
 		
 	checkSupply();
 	
-	UnitType nextBuilding = buildOrder.at(0);
+	UnitType nextBuilding = UnitTypes::Zerg_Spawning_Pool;
 	Unit builder;
 
 	

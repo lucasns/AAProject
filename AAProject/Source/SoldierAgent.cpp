@@ -44,6 +44,13 @@ void SoldierAgent::AttackOrder(Position targetPosition) {
 
 }
 
+void SoldierAgent::RetreatOrder(Position targetPosition) {
+	this->attackCommand = false;
+	this->targetPosition = targetPosition;
+
+
+}
+
 bool SoldierAgent::isDead() {
 	return (this->unit == NULL || !this->unit->exists());
 }

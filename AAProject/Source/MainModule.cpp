@@ -114,7 +114,7 @@ void MainModule::onUnitDestroy(BWAPI::Unit unit) {
 	if (IsAlly(unit) && unit->getType().isWorker()) {
 		int pos = 0;
 		for (auto w : centralAgent.workers) {
-			if (w.unit == unit) {
+			if (w->unit == unit) {
 				centralAgent.workers.erase(centralAgent.workers.begin() + pos);
 				break;
 			}
@@ -131,7 +131,7 @@ void MainModule::onUnitMorph(BWAPI::Unit unit) {
 		
 		int pos = 0;
 		for (auto u : centralAgent.workers) {
-			if (u.unit == unit) {
+			if (u->unit == unit) {
 				centralAgent.workers.erase(centralAgent.workers.begin() + pos);
 				break;
 			}
@@ -169,11 +169,19 @@ void MainModule::onUnitComplete(BWAPI::Unit unit) {
 DWORD WINAPI threadWorkerAgent(LPVOID param) {
 	BWAPI::Unit unit = static_cast<BWAPI::Unit>(param);
 	
-	WorkerAgent agent(unit);
+	WorkerAgent * agent = new WorkerAgent(unit);
+
+	DWORD dwWaitResult;
+
+	dwWaitResult = WaitForSingleObject(
+		ghMutex,
+		100);
 
 	centralAgent.workers.push_back(agent);
 
-	DWORD dwWaitResult;
+	if (!ReleaseMutex(ghMutex)) {
+
+	}
 
 	while (true) {
 
@@ -181,13 +189,13 @@ DWORD WINAPI threadWorkerAgent(LPVOID param) {
 			ghMutex,
 			100);
 
-		if (GameOver || agent.unit == NULL || !agent.unit->exists()) {
+		if (GameOver || agent->unit == NULL || !agent->unit->exists()) {
 			ReleaseMutex(ghMutex);
 			return 0;
 		}
 		
 		if (dwWaitResult == WAIT_OBJECT_0 || dwWaitResult == WAIT_ABANDONED) {
-			agent.Update();
+			agent->Update();
 			if (!ReleaseMutex(ghMutex)) {
 				
 			}
@@ -202,7 +210,7 @@ DWORD WINAPI threadWorkerAgent(LPVOID param) {
 DWORD WINAPI threadSoldierAgent(LPVOID param) {
 	BWAPI::Unit unit = static_cast<BWAPI::Unit>(param);
 
-	SoldierAgent agent(unit);
+	SoldierAgent *agent = new SoldierAgent(unit);
 
 	centralAgent.army.push_back(agent);
 
@@ -210,19 +218,29 @@ DWORD WINAPI threadSoldierAgent(LPVOID param) {
 
 	DWORD dwWaitResult;
 
+	dwWaitResult = WaitForSingleObject(
+		ghMutex,
+		100);
+
+	centralAgent.army.push_back(agent);
+
+	if (!ReleaseMutex(ghMutex)) {
+
+	}
+
 	while (true) {
 
 		dwWaitResult = WaitForSingleObject(
 			ghMutex,
 			100);
 
-		if (GameOver || agent.unit == NULL || !agent.unit->exists()) {
+		if (GameOver || agent->unit == NULL || !agent->unit->exists()) {
 			ReleaseMutex(ghMutex);
 			return 0;
 		}
 
 		if (dwWaitResult == WAIT_OBJECT_0 || dwWaitResult == WAIT_ABANDONED) {
-			agent.Update();
+			agent->Update();
 			if (!ReleaseMutex(ghMutex)) {
 
 			}
@@ -250,7 +268,7 @@ DWORD WINAPI threadCentralAgent(LPVOID param) {
 				
 			}
 		}
-		Sleep(20);
+		Sleep(50);
 	}
 
 }

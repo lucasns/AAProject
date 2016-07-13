@@ -19,8 +19,8 @@ public:
 	BWAPI::Unitset scouts;
 	BWAPI::Unitset buildings;
 
-	std::vector<WorkerAgent> workers;
-	std::vector<SoldierAgent> army;
+	std::vector<WorkerAgent*> workers;
+	std::vector<SoldierAgent*> army;
 
 
 	//Map Information
@@ -31,7 +31,6 @@ public:
 	//Base Information
 
 	bool pool = false;
-	std::vector<BWAPI::UnitType> buildOrder;
 	int numWorkers;
 
 
