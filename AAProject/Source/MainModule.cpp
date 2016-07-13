@@ -26,12 +26,6 @@ void MainModule::onStart() {
 	
 	Broodwar->setCommandOptimizationLevel(2);
 
-	Unit a;
-
-	for (auto u : Broodwar->getAllUnits()) {
-		a = u;
-		break;
-	}
 
 	centralAgent = CentralAgent();
 
@@ -49,7 +43,7 @@ void MainModule::onEnd(bool isWinner) {
 }
 
 void MainModule::onFrame() {
-
+	
 
 	//Debug messages
 
@@ -62,24 +56,25 @@ void MainModule::onFrame() {
 	Broodwar->drawTextScreen(200, 40, "N frames: %d", Broodwar->getFrameCount());
 	
 	//
-	
-	if (Broodwar->getFrameCount() % 10 == 0) {
-		
-		//centralAgent.Update();
+	if (!THREADED) {
+
+		if (Broodwar->getFrameCount() % 10 == 0) {
+
+			//centralAgent.Update();
 
 
-		for (auto u : centralAgent.workers) {
-			//u.Update();
+			for (auto u : centralAgent.workers) {
+				//u.Update();
+			}
+
+
+			for (auto u : centralAgent.army) {
+				//u.Update();
+			}
+
+
 		}
-
-		
-		for (auto u : centralAgent.army) {
-			//u.Update();
-		}
-		
-	
 	}
-
 
 }
 
@@ -177,6 +172,12 @@ void MainModule::onSaveGame(std::string gameName) {
 }
 
 void MainModule::onUnitComplete(BWAPI::Unit unit) {
+	DWORD dwWaitResult;
+
+	dwWaitResult = WaitForSingleObject(
+		ghMutex,
+		100);
+
 	if (IsAlly(unit) && unit->getType().isWorker()) {
 		CreateThread(NULL, 0, threadWorkerAgent, (LPVOID)unit, 0, NULL);
 	
@@ -187,6 +188,9 @@ void MainModule::onUnitComplete(BWAPI::Unit unit) {
 		CreateThread(NULL, 0, threadSoldierAgent, (LPVOID)unit, 0, NULL);
 		
 	}
+
+	ReleaseMutex(ghMutex);
+
 }
 
 DWORD WINAPI threadWorkerAgent(LPVOID param) {
