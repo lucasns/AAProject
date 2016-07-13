@@ -30,7 +30,8 @@ public:
 
 	//Base Information
 
-	bool pool = false;
+	bool pool;
+	bool workersRush;
 	int numWorkers;
 
 

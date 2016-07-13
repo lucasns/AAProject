@@ -12,12 +12,12 @@ WorkerAgent::WorkerAgent(Unit unit) {
 }
 
 void WorkerAgent::Update() {
-	if (isExplorer) {
-		this->explore();
+	if (unit == NULL || !unit->exists()) {
 		return;
 	}
 
-	if (unit == NULL || !unit->exists()) {
+	if (isExplorer) {
+		this->explore();
 		return;
 	}
 
@@ -53,7 +53,7 @@ void WorkerAgent::Update() {
 	}
 }
 
-void WorkerAgent::explore() {
+void WorkerAgent::explore() { //Explore enemy base
 	Position explorePosition;
 	//Get unexplored basePosition
 	for (auto l : Broodwar->getStartLocations()) {

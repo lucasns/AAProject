@@ -33,7 +33,7 @@ void SoldierAgent::Update() {
 		}
 
 	} else {
-		unit->attack(unit->getClosestUnit(IsEnemy, 1000));
+		unit->attack(unit->getClosestUnit(IsEnemy, 500));
 	}
 }
 

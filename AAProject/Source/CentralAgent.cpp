@@ -10,6 +10,7 @@ CentralAgent::CentralAgent() {
 	
 	this->pool = false;
 	this->numWorkers = 5;
+	this->workersRush = false;
 
 
 
@@ -79,11 +80,12 @@ void CentralAgent::ArmyManagement() {
 		}
 	}
 
-	if (army.size() >= 6 && Broodwar->self()->minerals() >= 150) {
+	if (!workersRush && army.size() >= 6 && Broodwar->self()->minerals() >= 150) {
 		for (auto &u : workers) {
 			u->AttackOrder(attackPosition);
 
 		}
+		workersRush = true;
 	}
 
 	if (workers.size() >= 6) {
