@@ -131,7 +131,7 @@ void MainModule::onUnitDestroy(BWAPI::Unit unit) {
 
 	} else if (IsAlly(unit) && unit->getType() == UnitTypes::Zerg_Zergling) {
 		int pos = 0;
-		for (auto w : centralAgent.workers) {
+		for (auto w : centralAgent.army) {
 			if (w->unit == unit) {
 				centralAgent.army.erase(centralAgent.army.begin() + pos);
 				break;
