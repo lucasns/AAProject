@@ -9,7 +9,7 @@ CentralAgent::CentralAgent() {
 	this->enemyBase = Position(-1, -1);
 	
 	this->pool = false;
-	this->numWorkers = 4;
+	this->numWorkers = 5;
 
 
 
@@ -79,7 +79,7 @@ void CentralAgent::ArmyManagement() {
 		}
 	}
 
-	if (army.size() >= 6) {
+	if (army.size() >= 6 && Broodwar->self()->minerals() >= 150) {
 		for (auto &u : workers) {
 			u->AttackOrder(attackPosition);
 
@@ -90,8 +90,9 @@ void CentralAgent::ArmyManagement() {
 }
 
 void CentralAgent::BaseManagement() {
-		
-	checkSupply();
+	
+	//Not used in zerg rush
+	//checkSupply();
 	
 	UnitType nextBuilding = UnitTypes::Zerg_Spawning_Pool;
 	Unit builder;

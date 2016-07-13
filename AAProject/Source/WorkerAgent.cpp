@@ -8,6 +8,7 @@ WorkerAgent::WorkerAgent(Unit unit) {
 	this->unit = unit;
 	this->attackCommand = false;
 	this->targetPosition = Position(-1, -1);
+	this->isExplorer = false;
 }
 
 void WorkerAgent::Update() {
@@ -47,8 +48,6 @@ void WorkerAgent::Update() {
 			unit->attack(targetPosition);
 		}
 	}
-	
-
 }
 
 void WorkerAgent::AttackOrder(Position targetPosition) {

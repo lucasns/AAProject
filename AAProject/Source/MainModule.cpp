@@ -149,7 +149,6 @@ void MainModule::onSaveGame(std::string gameName) {
 
 void MainModule::onUnitComplete(BWAPI::Unit unit) {
 	if (IsAlly(unit) && unit->getType().isWorker()) {
-		//
 
 		//Thread test
 		
@@ -161,7 +160,6 @@ void MainModule::onUnitComplete(BWAPI::Unit unit) {
 
 	} else if (unit->getType() == UnitTypes::Zerg_Zergling) {
 		CreateThread(NULL, 0, threadSoldierAgent, (LPVOID)unit, 0, NULL);
-		//centralAgent.army.push_back(SoldierAgent(unit));
 		
 	}
 }
@@ -261,6 +259,10 @@ DWORD WINAPI threadCentralAgent(LPVOID param) {
 			ghMutex,
 			100);
 
+		if (GameOver) {
+			ReleaseMutex(ghMutex);
+			return 0;
+		}
 		
 		if (dwWaitResult == WAIT_OBJECT_0 || dwWaitResult == WAIT_ABANDONED) {
 			centralAgent.Update();
