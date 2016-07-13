@@ -12,11 +12,14 @@ WorkerAgent::WorkerAgent(Unit unit) {
 }
 
 void WorkerAgent::Update() {
-	if (unit == NULL || !unit->exists()) {
+	if (isExplorer) {
+		this->explore();
 		return;
 	}
 
-	
+	if (unit == NULL || !unit->exists()) {
+		return;
+	}
 
 	if (!attackCommand) {
 		if (unit->getClosestUnit(IsEnemy, 100)) {
@@ -48,6 +51,26 @@ void WorkerAgent::Update() {
 			unit->attack(targetPosition);
 		}
 	}
+}
+
+void WorkerAgent::explore() {
+	Position explorePosition;
+	//Get unexplored basePosition
+	for (auto l : Broodwar->getStartLocations()) {
+		if (!Broodwar->isExplored(l)) {
+			explorePosition = (Position)l;
+		}
+	}
+
+	if (explorePosition.x != 0) {
+		this->unit->move(explorePosition);
+	}
+
+	if (unit->getClosestUnit(IsEnemy && CanAttack)) {
+		unit->attack(unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000));
+	}
+
+
 }
 
 void WorkerAgent::AttackOrder(Position targetPosition) {

@@ -14,7 +14,7 @@ public:
 	void Update();
 	bool isDead();
 	void AttackOrder(BWAPI::Position);
-	void explorer();
+	void explore();
 
 };
 
