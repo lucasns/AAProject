@@ -71,7 +71,7 @@ void CentralAgent::Update() {
 
 void CentralAgent::ArmyManagement() {
 	attackPosition = enemyBase;
-	if (army.size() >= 1) {
+	if (army.size() >= 6) {
 		for (auto u : army) {
 			u->AttackOrder(attackPosition);
 
@@ -86,6 +86,13 @@ void CentralAgent::ArmyManagement() {
 		}
 	}
 
+	if (workers.size() >= 6) {
+		workers.at(0)->isExplorer = true;
+
+	}
+
+
+	
 
 }
 

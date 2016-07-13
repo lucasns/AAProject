@@ -43,6 +43,10 @@ public:
 	void Update();
 	void ArmyManagement();
 	void BaseManagement();
+	void addWorker(WorkerAgent * worker);
+	void removeWorker(WorkerAgent * worker);
+	void addSoldier(SoldierAgent * soldier);
+	void removeSoldier(SoldierAgent * soldier);
 
 	
 

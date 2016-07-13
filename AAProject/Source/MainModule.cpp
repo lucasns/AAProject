@@ -45,7 +45,7 @@ void MainModule::onEnd(bool isWinner) {
 	if (isWinner) {
 	}
 
-	Sleep(1000);
+	Sleep(100);
 }
 
 void MainModule::onFrame() {
@@ -111,6 +111,13 @@ void MainModule::onUnitCreate(BWAPI::Unit unit) {
 }
 
 void MainModule::onUnitDestroy(BWAPI::Unit unit) {
+	DWORD dwWaitResult;
+
+	dwWaitResult = WaitForSingleObject(
+		ghMutex,
+		100);
+
+
 	if (IsAlly(unit) && unit->getType().isWorker()) {
 		int pos = 0;
 		for (auto w : centralAgent.workers) {
@@ -122,10 +129,30 @@ void MainModule::onUnitDestroy(BWAPI::Unit unit) {
 		}
 
 
+	} else if (IsAlly(unit) && unit->getType() == UnitTypes::Zerg_Zergling) {
+		int pos = 0;
+		for (auto w : centralAgent.workers) {
+			if (w->unit == unit) {
+				centralAgent.army.erase(centralAgent.army.begin() + pos);
+				break;
+			}
+			pos++;
+		}
 	}
+
+
+	ReleaseMutex(ghMutex);
+
 }
 
 void MainModule::onUnitMorph(BWAPI::Unit unit) {
+
+	DWORD dwWaitResult;
+
+	dwWaitResult = WaitForSingleObject(
+		ghMutex,
+		100);
+
 	//Remove a Drone morphing into a building from workers
 	if (IsAlly(unit) && IsBuilding(unit)) {
 		
@@ -138,6 +165,8 @@ void MainModule::onUnitMorph(BWAPI::Unit unit) {
 			pos++;
 		}
 	}
+
+	ReleaseMutex(ghMutex);
 	
 }
 
@@ -149,12 +178,8 @@ void MainModule::onSaveGame(std::string gameName) {
 
 void MainModule::onUnitComplete(BWAPI::Unit unit) {
 	if (IsAlly(unit) && unit->getType().isWorker()) {
-
-		//Thread test
-		
 		CreateThread(NULL, 0, threadWorkerAgent, (LPVOID)unit, 0, NULL);
-		
-
+	
 	} else if (IsBuilding(unit) && IsOwned(unit)) {
 		centralAgent.buildings.insert(unit);
 
@@ -210,9 +235,6 @@ DWORD WINAPI threadSoldierAgent(LPVOID param) {
 
 	SoldierAgent *agent = new SoldierAgent(unit);
 
-	centralAgent.army.push_back(agent);
-
-	
 
 	DWORD dwWaitResult;
 
