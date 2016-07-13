@@ -47,13 +47,17 @@ void MainModule::onFrame() {
 
 	//Debug messages
 
-	Broodwar->drawTextScreen(20, 20, "N workers: %d", centralAgent.workers.size());
-	Broodwar->drawTextScreen(20, 40, "N army: %d", centralAgent.army.size());
-	Broodwar->drawTextScreen(20, 60, "N buildings: %d", centralAgent.buildings.size());
-	
-	Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
-	Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
-	Broodwar->drawTextScreen(200, 40, "N frames: %d", Broodwar->getFrameCount());
+	if (DEBUG_MODE) {
+
+		Broodwar->drawTextScreen(20, 20, "N workers: %d", centralAgent.workers.size());
+		Broodwar->drawTextScreen(20, 40, "N army: %d", centralAgent.army.size());
+		Broodwar->drawTextScreen(20, 60, "N buildings: %d", centralAgent.buildings.size());
+
+		Broodwar->drawTextScreen(200, 0, "FPS: %d", Broodwar->getFPS());
+		Broodwar->drawTextScreen(200, 20, "Average FPS: %f", Broodwar->getAverageFPS());
+		Broodwar->drawTextScreen(200, 40, "N frames: %d", Broodwar->getFrameCount());
+
+	}
 	
 	//
 	if (!THREADED) {

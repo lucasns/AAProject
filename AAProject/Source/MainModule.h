@@ -8,6 +8,7 @@
 
 
 static bool THREADED = true;
+static bool DEBUG_MODE = FALSE;
 
 DWORD WINAPI threadWorkerAgent(LPVOID param);
 DWORD WINAPI threadSoldierAgent(LPVOID param);
