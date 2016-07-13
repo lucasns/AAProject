@@ -1,10 +1,15 @@
 #pragma once
 #include <BWAPI.h>
+#include <Windows.h>
 #include <vector>
 #include "WorkerAgent.h"
 #include "SoldierAgent.h"
 #include "CentralAgent.h"
 
+
+static bool THREADED = true;
+
+DWORD WINAPI threadWorkerAgent(LPVOID param);
 
 class MainModule : public BWAPI::AIModule {
 

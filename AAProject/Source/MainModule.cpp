@@ -6,11 +6,19 @@ using namespace Filter;
 using namespace std;
 
 
-
-
+static bool GameOver;
+HANDLE ghMutex;
+bool test = false;
 
 
 void MainModule::onStart() {
+	GameOver = false;
+
+	ghMutex = CreateMutex(
+		NULL,              // default security attributes
+		FALSE,             // initially not owned
+		NULL);             // unnamed mutex
+
 	Broodwar << "The map is " << Broodwar->mapName() << "!" << std::endl;
 
 	Broodwar->enableFlag(Flag::UserInput);
@@ -30,6 +38,7 @@ void MainModule::onStart() {
 }
 
 void MainModule::onEnd(bool isWinner) {
+	GameOver = true;
 	if (isWinner) {
 	}
 }
@@ -55,7 +64,7 @@ void MainModule::onFrame() {
 
 
 		for (auto u : centralAgent.workers) {
-			u.Update();
+			//u.Update();
 		}
 
 		
@@ -123,9 +132,6 @@ void MainModule::onUnitMorph(BWAPI::Unit unit) {
 			}
 			pos++;
 		}
-	} else if (IsAlly(unit) && unit->getBuildType() == UnitTypes::Zerg_Overlord) {
-		
-
 	}
 	
 }
@@ -138,7 +144,14 @@ void MainModule::onSaveGame(std::string gameName) {
 
 void MainModule::onUnitComplete(BWAPI::Unit unit) {
 	if (IsAlly(unit) && unit->getType().isWorker()) {
-		centralAgent.workers.push_back(WorkerAgent(unit));
+		//centralAgent.workers.push_back(WorkerAgent(unit));
+
+		//Thread test
+		
+		if (!test) {
+			CreateThread(NULL, 0, threadWorkerAgent, (LPVOID)unit, 0, NULL);
+			//test = true;
+		}
 
 	} else if (IsBuilding(unit) && IsOwned(unit)) {
 		centralAgent.buildings.insert(unit);
@@ -149,3 +162,88 @@ void MainModule::onUnitComplete(BWAPI::Unit unit) {
 	}
 }
 
+DWORD WINAPI threadWorkerAgent(LPVOID param) {
+	BWAPI::Unit unit = static_cast<BWAPI::Unit>(param);
+	WorkerAgent* agent = static_cast<WorkerAgent*>(param);
+
+
+	DWORD dwWaitResult;
+
+	while (true) {
+
+		dwWaitResult = WaitForSingleObject(
+			ghMutex,
+			100);
+
+		if (GameOver || agent->unit == NULL || !agent->unit->exists()) {
+			ReleaseMutex(ghMutex);
+			return 0;
+		}
+		
+		if (dwWaitResult == WAIT_OBJECT_0 || dwWaitResult == WAIT_ABANDONED) {
+			agent->Update();
+			if (!ReleaseMutex(ghMutex)) {
+				
+			}
+		}
+		Sleep(20);
+	}
+	
+}
+
+
+DWORD WINAPI threadSoldierAgent(LPVOID param) {
+	WorkerAgent* agent = static_cast<WorkerAgent*>(param);
+
+
+	DWORD dwWaitResult;
+
+	while (true) {
+
+		dwWaitResult = WaitForSingleObject(
+			ghMutex,
+			100);
+
+		if (GameOver || agent->unit == NULL || !agent->unit->exists()) {
+			ReleaseMutex(ghMutex);
+			return 0;
+		}
+
+		if (dwWaitResult == WAIT_OBJECT_0 || dwWaitResult == WAIT_ABANDONED) {
+			if (!ReleaseMutex(ghMutex)) {
+
+			}
+		}
+		Sleep(20);
+	}
+
+}
+
+
+DWORD WINAPI threadCentralAgent(LPVOID param) {
+	WorkerAgent* agent = static_cast<WorkerAgent*>(param);
+
+
+	DWORD dwWaitResult;
+
+	while (true) {
+
+		dwWaitResult = WaitForSingleObject(
+			ghMutex,
+			100);
+
+		if (GameOver || agent->unit == NULL || !agent->unit->exists()) {
+			ReleaseMutex(ghMutex);
+			return 0;
+		}
+
+		if (dwWaitResult == WAIT_OBJECT_0 || dwWaitResult == WAIT_ABANDONED) {
+			agent->Update();
+			if (!ReleaseMutex(ghMutex)) {
+
+			}
+		}
+		Sleep(20);
+	}
+
+}
