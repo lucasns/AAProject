@@ -10,6 +10,8 @@
 static bool THREADED = true;
 
 DWORD WINAPI threadWorkerAgent(LPVOID param);
+DWORD WINAPI threadSoldierAgent(LPVOID param);
+DWORD WINAPI threadCentralAgent(LPVOID param);
 
 class MainModule : public BWAPI::AIModule {
 
@@ -34,7 +36,7 @@ public:
   virtual void onUnitComplete(BWAPI::Unit unit);
 
 
-  CentralAgent centralAgent;
+ 
  
 };
 

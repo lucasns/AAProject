@@ -73,12 +73,13 @@ void CentralAgent::Update() {
 
 void CentralAgent::ArmyManagement() {
 	attackPosition = enemyBase;
-	if (army.size() >= 20) {
+	if (army.size() >= 1) {
 		for (auto &u : army) {
 			u.AttackOrder(attackPosition);
 
 		}
 	}
+
 
 }
 
