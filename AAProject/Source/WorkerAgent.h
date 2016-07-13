@@ -9,6 +9,6 @@ public:
 
 	WorkerAgent(BWAPI::Unit unit);
 	void Update();
-
+	bool isDead();
 };
 

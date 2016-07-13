@@ -12,6 +12,7 @@ public:
 	SoldierAgent(BWAPI::Unit unit);
 	void Update();
 	void AttackOrder(BWAPI::Position);
+	bool isDead();
 
 };
 

@@ -29,3 +29,7 @@ void WorkerAgent::Update() {
 		}
 	}
 }
+
+bool WorkerAgent::isDead() {
+	return (this->unit == NULL || !this->unit->exists());
+}
