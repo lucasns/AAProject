@@ -151,7 +151,10 @@ void CentralAgent::BaseManagement() {
 
 			bool sp = false;
 
+
 			if (u->isIdle() && workers.size() + n < numWorkers && u->getClosestUnit(IsOwned && GetType == UnitTypes::Zerg_Spawning_Pool)) {
+				u->train(u->getType().getRace().getWorker());
+			} else if (u->isIdle() && workers.size() + n < (numWorkers-1) && !u->getClosestUnit(IsOwned && GetType == UnitTypes::Zerg_Spawning_Pool)) {
 				u->train(u->getType().getRace().getWorker());
 			}
 
