@@ -17,7 +17,7 @@ void SoldierAgent::Update() {
 	if (unit == NULL || !unit->exists()) {
 		return;
 	}
-
+	
 	if (attackCommand) {
 		if (unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000)) {
 			unit->attack(unit->getClosestUnit(IsEnemy && CanAttack && !IsWorker, 1000));
@@ -40,6 +40,7 @@ void SoldierAgent::Update() {
 void SoldierAgent::AttackOrder(Position targetPosition) {
 	this->attackCommand = true;
 	this->targetPosition = targetPosition;
+	
 
 }
 

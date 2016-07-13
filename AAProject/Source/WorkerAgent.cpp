@@ -15,6 +15,8 @@ void WorkerAgent::Update() {
 		return;
 	}
 
+	
+
 	if (!attackCommand) {
 		if (unit->getClosestUnit(IsEnemy, 100)) {
 			unit->attack(unit->getClosestUnit(IsEnemy, 100));

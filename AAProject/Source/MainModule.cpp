@@ -74,7 +74,7 @@ void MainModule::onFrame() {
 
 		
 		for (auto u : centralAgent.army) {
-			u.Update();
+			//u.Update();
 		}
 		
 	
@@ -205,6 +205,8 @@ DWORD WINAPI threadSoldierAgent(LPVOID param) {
 	SoldierAgent agent(unit);
 
 	centralAgent.army.push_back(agent);
+
+	
 
 	DWORD dwWaitResult;
 
