@@ -64,16 +64,16 @@ void MainModule::onFrame() {
 
 		if (Broodwar->getFrameCount() % 10 == 0) {
 
-			//centralAgent.Update();
+			centralAgent.Update();
 
 
 			for (auto u : centralAgent.workers) {
-				//u.Update();
+				u->Update();
 			}
 
 
 			for (auto u : centralAgent.army) {
-				//u.Update();
+				u->Update();
 			}
 
 
